@@ -182,3 +182,24 @@ Decisions had to be made on:
 
 These challenges reflect normal progress at this stage of the project.
 The next milestones include expanding feature engineering, performing systematic hyperparameter tuning, validating stability with cross-validation, and deploying interpretability tools such as SHAP.
+
+9. Work Completed So Far vs Planned Work
+
+Completed so far:
+
+Exploration of application and credit datasets
+Construction of a working baseline target from STATUS codes
+Preliminary preprocessing pipeline (encoding, scaling, basic handling of missing values)
+Baseline models: Logistic Regression, Decision Tree, Random Forest, SVM
+First trials on handling class imbalance (SMOTE, oversampling, class weights)
+Early evaluation using F1-score, precision, recall, ROC-AUC
+
+Planned for the next milestone:
+
+Improved target engineering (better aggregation of credit histories)
+Systematic hyperparameter tuning (GridSearch/RandomSearch)
+Addition of Gradient Boosting models and KNN
+Implementation of interpretability methods (SHAP, permutation importance)
+Cleanup of missing values strategy (medians/modes integrated in the pipeline)
+More robust cross-validation (K-Fold or StratifiedKFold)
+Stability checks and reduction of overfitting

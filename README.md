@@ -1,68 +1,62 @@
-Credit Default Prediction — Machine Learning Project
+Credit Default Prediction
+Course: Machine Learning – ESILV (Master 1 Financial Engineering) Authors: Gabriel Picard, Thibault Pelou, Hugo Picard Date: December 2025
 
-This project develops a supervised learning pipeline to predict credit default risk using demographic information and longitudinal credit history. The objective is to build a reliable and interpretable model capable of identifying clients with past delinquency.
+Project Overview
+This project aims to build a supervised machine learning pipeline to predict credit default risk. In the context of financial risk management, accurately estimating the Probability of Default (PD) is critical for loan pricing, regulatory compliance (Basel II/III), and minimizing portfolio losses.
 
-1. Data and Target Construction
+We used the Home Credit Default Risk dataset to classify clients based on their application data and longitudinal credit history. The primary challenge of this project was handling the significant class imbalance—defaulters represent only about 12% of the dataset—while maintaining a model that is both predictive and interpretable.
 
-Two datasets are used:
+Data Construction and Preprocessing
+The analysis is based on two sources: demographic/socio-economic data (application_record.csv) and monthly repayment history (credit_record.csv).
 
-Application data: demographic, socio-economic, and financial variables (income, employment duration, education, household structure, etc.).
+We constructed the target variable by aggregating client history. A client was flagged as a "defaulter" (1) if they had any payment past due by more than 30 days (Status 1-5) during the observation window. Otherwise, they were labeled as a "good" client (0).
 
-Credit history: monthly credit status for each client.
+Our preprocessing strategy focused on data integrity and reproducibility:
 
-The binary target variable is defined as:
+Data Cleaning: We identified and treated anomalies, such as the placeholder value 365243 in the employment duration column, and calculated age from birth days for better readability.
 
-Default = 1 if the client has any STATUS in {1, 2, 3, 4, 5}.
-Default = 0 otherwise.
+Imputation: To prevent data leakage, we built a pipeline using SimpleImputer. Numerical gaps were filled with medians, and categorical gaps with the most frequent value.
 
-Credit histories are aggregated into client-level features (number of late payments, maximum delinquency, history length, etc.) before merging with the application data.
+Encoding & Scaling: We used One-Hot Encoding for categorical variables and Standard Scaling for numerical features to ensure compatibility with distance-based algorithms like k-NN and SVM.
 
-2. Preprocessing Pipeline
+Modeling Approach
+We benchmarked several algorithms, ranging from linear models to ensemble methods. Given the imbalanced nature of the target, we moved beyond simple accuracy and focused on F1-score and ROC-AUC. We also paid close attention to Recall, as missing a potential defaulter is costly for a financial institution.
 
-Missing values: median for numerical features, mode for categorical features
+The models implemented include:
 
-Encoding: one-hot encoding for nominal variables, label encoding for binary variables
+Logistic Regression: Used as a baseline, both with and without PCA dimensionality reduction.
 
-Scaling: applied to models sensitive to feature magnitude
+Support Vector Machines (SVM): Tested with an RBF kernel.
 
-Class imbalance: compared under baseline, undersampling, SMOTE, and hybrid strategies
+Tree-based Ensembles: Decision Trees, Random Forest, and Gradient Boosting.
 
-3. Modelling and Evaluation
+Voting Classifier: A soft-voting ensemble combining our top-performing estimators.
 
-Models trained:
+To address the class imbalance, we experimented with class_weight='balanced' parameters and integrated resampling techniques (Random Over-Sampling and SMOTE) directly into the cross-validation pipelines.
 
-Logistic Regression
+Results and Discussion
+Our experiments showed that tree-based models significantly outperformed linear ones. The Logistic Regression baseline struggled to capture non-linear relationships in the socio-economic data.
 
-Random Forest
+The Random Forest model (tuned via GridSearchCV) and the Voting Ensemble yielded the best results. While the baseline accuracy was high due to the majority class, the Random Forest achieved a much more balanced F1-score and a ROC-AUC around 0.78.
 
-Gradient Boosting / XGBoost
+We found that while resampling techniques like SMOTE improved the model's ability to detect defaulters (higher Recall), they often did so at the expense of Precision. The class_weight='balanced' approach in Random Forest provided the most stable trade-off.
 
-Support Vector Machine
+Repository Structure
+Project-ML-V2.ipynb: The main Jupyter Notebook containing the full analysis, from EDA to final model evaluation.
 
-K-Nearest Neighbors
+ML_REPORT.pdf: The detailed project report covering the business case, methodology, and in-depth result analysis.
 
-Evaluation metrics:
+data/: Directory containing the source CSV files (not included in the repo due to size, available on Kaggle).
 
-F1-score (primary)
+Requirements
+The project requires Python 3.8+ and the following libraries:
 
-Precision and Recall
+pandas
 
-ROC-AUC
+numpy
 
-Confusion Matrix
+scikit-learn
 
-Tree-based models generally achieve the most stable performance, particularly when combined with sampling techniques.
+imbalanced-learn (for SMOTE and pipelines)
 
-4. Model Interpretation
-
-Interpretability is based on:
-
-Permutation feature importance
-
-SHAP values
-
-Key predictors include delinquency severity, employment duration, and income.
-
-5. Conclusion
-
-This project delivers a complete and reproducible credit-scoring pipeline covering data cleaning, feature engineering, class imbalance management, model comparison, and interpretability. The methodology aligns with industry standards in credit risk modelling and demonstrates the applicability of machine learning to default prediction
+matplotlib / seaborn (for visualization)
